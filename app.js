@@ -37,24 +37,34 @@
   var wa = document.querySelectorAll('[data-dv-wa]');
   for (var w = 0; w < wa.length; w++) wa[w].href = CONFIG.waUrl;
 
-  var current = null;
+  var stack = [];
+
+  function dvLock() {
+    if (stack.length) document.body.classList.add('dv-lock');
+    else document.body.classList.remove('dv-lock');
+  }
 
   function dvOpen(id) {
     var page = document.getElementById(id);
     if (!page) return;
-    current = page;
+    stack.push(page);
+    page.style.zIndex = 100 + stack.length;
     page.hidden = false;
     page.scrollTop = 0;
-    document.body.classList.add('dv-lock');
+    dvLock();
     var back = page.querySelector('.dv-back');
     if (back) back.focus();
   }
 
   function dvClose() {
-    if (!current) return;
-    current.hidden = true;
-    current = null;
-    document.body.classList.remove('dv-lock');
+    var page = stack.pop();
+    if (page) page.hidden = true;
+    dvLock();
+  }
+
+  function dvHome() {
+    while (stack.length) stack.pop().hidden = true;
+    dvLock();
   }
 
   var openers = document.querySelectorAll('[data-dv-open]');
@@ -67,6 +77,11 @@
   var closers = document.querySelectorAll('[data-dv-close]');
   for (var c = 0; c < closers.length; c++) {
     closers[c].addEventListener('click', dvClose);
+  }
+
+  var homers = document.querySelectorAll('[data-dv-home]');
+  for (var h = 0; h < homers.length; h++) {
+    homers[h].addEventListener('click', dvHome);
   }
 
   if ('serviceWorker' in navigator) {
