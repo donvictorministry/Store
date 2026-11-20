@@ -59,9 +59,9 @@ p, h1, h2, strong {
   gap: 18px;
 }
 .visionary-photo {
-  width: 120px;
+  width: 140px;
   height: 210px;
-  min-width: 120px;
+  min-width: 140px;
   border: 3px solid #E9B93C;
   border-radius: 22px;
   object-fit: cover;
@@ -285,10 +285,11 @@ p, h1, h2, strong {
   background: var(--blue);
   color: var(--white);
   font-family: inherit;
-  font-size: 20px;
+  font-size: clamp(17px, 4.9vw, 21px);
   font-weight: 900;
   line-height: 1.2;
-  padding: 12px 22px;
+  white-space: nowrap;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,17 +350,25 @@ p, h1, h2, strong {
   background: var(--blue);
   color: var(--white);
   border-bottom: 4px solid var(--gold);
-  padding: 14px 16px;
+  height: 84px;
+  flex-shrink: 0;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
 .dv-page-head h2 {
-  font-size: 23px;
+  flex: 1;
+  min-width: 0;
+  font-size: 20px;
   font-weight: 900;
-  line-height: 1.3;
+  line-height: 1.2;
   color: var(--gold);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .dv-back {
@@ -409,22 +418,22 @@ p, h1, h2, strong {
   background: var(--gold);
   color: var(--blue);
   border-color: var(--blue);
-  font-size: 22px;
-}
-
-.dv-back-float {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 3;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  font-size: clamp(18px, 5.4vw, 22px);
 }
 
 .dv-cover-full {
   display: block;
   width: 100%;
-  height: 100dvh;
+  height: calc(100dvh - 84px);
   flex-shrink: 0;
   object-fit: cover;
   background: var(--light);
+}
+
+@media (max-width: 340px) {
+  .dv-pill {
+    font-size: 16px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
