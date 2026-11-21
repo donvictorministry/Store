@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1877F2">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin Control Center</title>
+<link rel="manifest" id="dvMf">
+<style>
+:root{--blue:#1877F2;--navy:#0A3F8F;--gold:#E9B93C;--bg:#E7EDF5;--text:#121212;--mut:#4A5568}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);font-family:Roboto,Arial,sans-serif;font-size:19px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{min-height:100dvh}
+button,input,textarea{font-family:inherit;font-size:19px}
+.scr{display:none;min-height:100dvh;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 20px}
+.scr.on{display:flex}
+.card{width:100%;background:#fff;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;border:1px solid rgba(10,63,143,.12)}
+h1,h2,h3{color:var(--navy);font-weight:900;line-height:1.3}
+h1{font-size:27px;text-align:center}h2{font-size:23px}h3{font-size:19px}
+p{line-height:1.55}.mut{color:var(--mut);font-size:17px}
+.btn{width:100%;min-height:56px;border:3px solid var(--gold);border-radius:999px;background:var(--navy);color:#fff;font-weight:900;padding:10px 16px;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:#fff;color:var(--navy);border-color:var(--navy)}
+.btn.red{background:#C62828;border-color:#C62828}
+.btn.sm{width:auto;min-height:44px;font-size:17px;padding:6px 16px}
+.inp{width:100%;border:2px solid rgba(10,63,143,.25);border-radius:14px;padding:12px 14px;background:#fff;color:var(--text)}
+textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
+.link{background:none;border:0;color:var(--navy);text-decoration:underline;font-size:17px;cursor:pointer;padding:8px}
+#logo{width:132px;height:132px;border-radius:50%;border:4px solid var(--gold);background:var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#logo svg{width:68px;height:68px}
+#sGate.on{background:linear-gradient(160deg,#0A3F8F,#1877F2)}
+#sGate h1{color:#fff;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+#cd{font-size:44px;font-weight:900;color:var(--navy);text-align:center}
+#code{text-align:center;letter-spacing:8px;font-size:27px;font-weight:900}
+/* app shell */
+#sApp{display:none;flex-direction:column;min-height:100dvh;padding-bottom:84px}
+#sApp.on{display:flex}
+.hd{position:sticky;top:0;z-index:5;height:72px;background:var(--blue);color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:4px solid var(--gold)}
+.hd svg{width:34px;height:34px;flex-shrink:0}.hd b{flex:1;font-size:21px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd button{background:#fff;color:var(--navy);border:0;border-radius:999px;font-weight:900;font-size:17px;padding:8px 16px;cursor:pointer}
+#main{display:flex;flex-direction:column;gap:12px;padding:14px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;height:72px;background:#fff;border-top:1px solid rgba(10,63,143,.2);display:flex}
+.nav button{flex:1;border:0;background:none;color:var(--mut);font-size:17px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.nav button.on{color:var(--blue)}
+.nav svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#F0F4FA;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-size:27px;color:var(--navy);font-weight:900}.stat span{font-size:17px;color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border-radius:999px;padding:4px 14px;font-size:17px;font-weight:700;background:#E3E8F0;color:var(--mut)}
+.chip.on{background:#D7F5DF;color:#1B7A3A}.chip.off{background:#FDE0E0;color:#B3261E}
+.chip.Live{background:#D7F5DF;color:#1B7A3A}.chip.Pending{background:#FFF1CC;color:#8A6100}.chip.Rejected{background:#FDE0E0;color:#B3261E}.chip.Lifted{background:#E3E8F0;color:var(--mut)}.chip.Active{background:#FDE0E0;color:#B3261E}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0}
+.row small{display:block;font-size:17px;color:var(--mut)}
+.sw{width:58px;height:32px;border-radius:16px;border:0;background:#B0BAC9;position:relative;flex-shrink:0;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .15s}
+.sw.on{background:var(--blue)}.sw.on::after{left:29px}
+.bar{display:flex;align-items:center;gap:8px;font-size:17px}.bar i{flex:1;height:10px;border-radius:5px;background:#DDE5F2;overflow:hidden;display:block}.bar u{display:block;height:100%;background:var(--blue)}
+.rv{background:#F0F4FA;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.rv .t{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.seg{display:flex;gap:8px}.seg .btn{min-height:48px}
+/* ui kit */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;display:flex;align-items:center;justify-content:center}
+.bx{width:92%;max-height:88dvh;overflow-y:auto;background:#fff;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.sp{position:fixed;inset:0;z-index:4000;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center}
+.sp i{width:56px;height:56px;border:6px solid #DDE5F2;border-top-color:var(--blue);border-radius:50%;animation:s .8s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);z-index:5000;background:#323232;color:#fff;font-size:17px;border-radius:999px;padding:12px 22px;width:max-content;max-width:92%;text-align:center}
+</style>
+</head>
+<body>
+
+<main class="scr" id="sUrl">
+  <h1>Connection</h1>
+  <div class="card">
+    <p>Paste your Google Apps Script web app URL to continue.</p>
+    <input class="inp" id="url" type="url" inputmode="url" autocomplete="off" placeholder="Paste web app URL">
+    <button class="btn" id="saveUrl" type="button">Save and Continue</button>
+    <button class="link" id="urlBack" type="button">Back</button>
+  </div>
+</main>
+
+<main class="scr" id="sGate">
+  <button id="logo" type="button" aria-label="Admin Control Center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#E9B93C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+  </button>
+  <h1 id="gateTitle">Admin Control Center</h1>
+</main>
+
+<main class="scr" id="sSend">
+  <h1>Admin Verification</h1>
+  <div class="card">
+    <p>A verification code will be sent to your registered email.</p>
+    <button class="btn" id="sendCode" type="button">Send me code</button>
+    <button class="link" id="backGate" type="button">Back</button>
+  </div>
+</main>
+
+<main class="scr" id="sVerify">
+  <h1>Enter Code</h1>
+  <div class="card">
+    <div id="cd">10:00</div>
+    <input class="inp" id="code" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+    <button class="btn" id="verify" type="button">Verify</button>
+    <button class="link" id="resend" type="button">Send a new code</button>
+  </div>
+</main>
+
+<div id="sApp">
+  <header class="hd">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+    <b>Admin Control Center</b>
+    <button id="logout" type="button">Logout</button>
+  </header>
+  <div id="main"></div>
+  <nav class="nav" id="nav">
+    <button data-t="ov" type="button"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Overview</button>
+    <button data-t="rv" type="button"><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>Reviews</button>
+    <button data-t="cf" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Controls</button>
+    <button data-t="bn" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg>Bans</button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (i) { return document.getElementById(i); };
+  var URLK = 'dv_adm_url', SESK = 'dv_adm_ses';
+  var api = null, tok = null, D = null, cur = 'ov', rvFilter = 'All', rvItems = [], rvMore = false, cdT = null, cdEnd = 0;
+
+  try {
+    var mf = { name: 'Admin Control Center', short_name: 'Admin', start_url: location.pathname, display: 'standalone', background_color: '#E7EDF5', theme_color: '#1877F2' };
+    $('dvMf').href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(mf));
+  } catch (e) {}
+
+  function ls(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+  function lset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function ldel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  function h(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function btn(t, c, f) { var b = h('button', 'btn ' + (c || ''), t); b.type = 'button'; if (f) b.onclick = f; return b; }
+
+  /* ---------- reusable ui kit: modal, spinner, toast ---------- */
+  function modal(o) {
+    var ov = h('div', 'ov'), bx = h('div', 'bx'), ac = h('div', ''); ac.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+    if (o.title) bx.appendChild(h('h2', '', o.title));
+    if (typeof o.body === 'string') bx.appendChild(h('p', '', o.body)); else if (o.body) bx.appendChild(o.body);
+    function close() { if (ov.parentNode) ov.parentNode.removeChild(ov); }
+    (o.actions || [{ t: 'OK' }]).forEach(function (a) {
+      ac.appendChild(btn(a.t, a.k, function () { if (a.f && a.f(close) === false) return; close(); }));
+    });
+    bx.appendChild(ac); ov.appendChild(bx); document.body.appendChild(ov);
+    return close;
+  }
+  function notice(t, m) { modal({ title: t, body: m }); }
+  function confirmBox(t, m, label, danger, go) { modal({ title: t, body: m, actions: [{ t: label, k: danger ? 'red' : '', f: function () { go(); } }, { t: 'Cancel', k: 'ghost' }] }); }
+  var spEl = null;
+  function spin(on) {
+    if (on && !spEl) { spEl = h('div', 'sp'); spEl.appendChild(h('i')); document.body.appendChild(spEl); }
+    if (!on && spEl) { spEl.parentNode.removeChild(spEl); spEl = null; }
+  }
+  function toast(m) { var t = h('div', 'toast', m); document.body.appendChild(t); setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3200); }
+
+  /* ---------- backend (only on explicit admin actions) ---------- */
+  async function raw(a, x) {
+    x = x || {}; x.a = a; x.t = tok;
+    try {
+      var f = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(x), redirect: 'follow' });
+      return await f.json();
+    } catch (e) { return { ok: false, code: 'NET', msg: 'Unable to reach the backend. Check the web app URL and your connection.' }; }
+  }
+  async function call(a, x, quiet) {
+    spin(true);
+    var r = await raw(a, x);
+    spin(false);
+    if (r && r.code === 'AUTH' && tok) { endSession(); notice('Session ended', r.msg); return null; }
+    if (!r || !r.ok) { if (!quiet) notice('Unable to continue', (r && r.msg) || 'Something went wrong.'); return null; }
+    return r;
+  }
+
+  /* ---------- screens and session ---------- */
+  function show(id) { ['sUrl', 'sGate', 'sSend', 'sVerify', 'sApp'].forEach(function (s) { $(s).classList.toggle('on', s === id); }); window.scrollTo(0, 0); }
+  function endSession() { tok = null; ldel(SESK); clearInterval(cdT); show('sGate'); }
+
+  $('saveUrl').onclick = function () {
+    var u = $('url').value.trim();
+    if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(u)) { notice('Invalid URL', 'Please paste your Google Apps Script web app URL.'); return; }
+    api = u; lset(URLK, u); $('url').value = ''; show('sGate'); toast('Connection saved.');
+  };
+  $('urlBack').onclick = function () { $('url').value = ''; show('sGate'); };
+  $('backGate').onclick = function () { show('sGate'); };
+
+  var taps = 0, tapT;
+  $('logo').onclick = function () {
+    taps++; clearTimeout(tapT); tapT = setTimeout(function () { taps = 0; }, 1500);
+    if (taps >= 4) { taps = 0; show(api ? 'sSend' : 'sUrl'); }
+  };
+
+  var tt = 0, ttT;
+  $('gateTitle').onclick = function () {
+    tt++; clearTimeout(ttT); ttT = setTimeout(function () { tt = 0; }, 2000);
+    if (tt >= 7) { tt = 0; show('sUrl'); }
+  };
+
+  async function sendCode() {
+    var r = await call('adm_send');
+    if (!r) return;
+    toast('Verification code has been sent to your registered email.');
+    $('code').value = ''; $('verify').disabled = false;
+    cdEnd = Date.now() + 600000;
+    clearInterval(cdT); tick(); cdT = setInterval(tick, 500);
+    show('sVerify');
+  }
+  function tick() {
+    var s = Math.max(0, Math.ceil((cdEnd - Date.now()) / 1000));
+    $('cd').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    if (!s) { clearInterval(cdT); $('verify').disabled = true; }
+  }
+  $('sendCode').onclick = sendCode;
+  $('resend').onclick = sendCode;
+  $('verify').onclick = async function () {
+    var c = $('code').value.replace(/\D/g, '');
+    if (c.length !== 6) { toast('Please enter the 6-digit code.'); return; }
+    var r = await call('adm_verify', { c: c });
+    if (!r) return;
+    clearInterval(cdT);
+    tok = r.t; lset(SESK, { t: r.t, x: r.x });
+    toast('You have been verified.');
+    enter();
+  };
+  $('logout').onclick = async function () {
+    var t = tok; spin(true); await raw('adm_logout'); spin(false); tok = null; ldel(SESK); show('sGate'); toast('You have been logged out.');
+  };
+  function expiry() {
+    var s = ls(SESK);
+    if (tok && s && s.x < Date.now()) { endSession(); notice('Session ended', 'Your six-hour session has expired. Please verify again.'); }
+  }
+  setInterval(expiry, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) expiry(); });
+
+  function enter() { show('sApp'); go('ov'); }
+
+  /* ---------- tabs ---------- */
+  $('nav').onclick = function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-t')); };
+  async function go(t) {
+    cur = t;
+    Array.prototype.forEach.call($('nav').children, function (b) { b.classList.toggle('on', b.getAttribute('data-t') === t); });
+    $('main').innerHTML = '';
+    if (t === 'ov' || t === 'cf') { var r = await call('adm_dash'); if (!r) return; D = r; if (t === 'ov') ov(); else cf(); }
+    if (t === 'rv') { rvItems = []; await loadRv(0); }
+    if (t === 'bn') bn();
+  }
+  function sec(title) { var c = h('div', 'card'); if (title) c.appendChild(h('h2', '', title)); $('main').appendChild(c); return c; }
+  function num(n) { n = Number(n) || 0; return n >= 1000 ? (n / 1000).toFixed(1).replace('.0', '') + 'K' : String(n); }
+
+  /* overview */
+  function ov() {
+    var c = D.cfg, m = $('main'); m.innerHTML = '';
+    var a = sec('System status'), ch = h('div', 'chips');
+    [['Reviews', 'ReviewEnabled'], ['Submissions', 'SubmissionsEnabled'], ['Voting', 'VotingEnabled'], ['Star ratings', 'RatingsEnabled'], ['User reviews', 'UserReviewsEnabled'], ['review.js', 'ReviewJsEnabled'], ['Announcement', 'AnnouncementEnabled']].forEach(function (x) {
+      var on = String(c[x[1]]).toUpperCase() === 'TRUE'; ch.appendChild(h('span', 'chip ' + (on ? 'on' : 'off'), x[0] + (on ? ': ON' : ': OFF')));
+    });
+    a.appendChild(ch);
+    a.appendChild(h('p', 'mut', 'Moderation for new reviews: ' + c.ModerationDefault + '. Rate limit: ' + c.RateLimitSeconds + 's.'));
+    var b = sec('Statistics'), g = h('div', 'grid');
+    [['Page views', num(D.stat.v)], ['Page likes', num(D.stat.l)], ['Live reviews', num(D.stat.r)], ['Ratings', num(D.stat.g)], ['Votes', num(D.stat.o)], ['Average', Number(D.stat.a).toFixed(1)]].forEach(function (x) {
+      var s = h('div', 'stat'); s.appendChild(h('b', '', x[1])); s.appendChild(h('span', '', x[0])); g.appendChild(s);
+    });
+    b.appendChild(g);
+    var cc = h('div', 'chips');
+    ['Live', 'Pending', 'Rejected'].forEach(function (k) { cc.appendChild(h('span', 'chip ' + k, k + ': ' + D.counts[k])); });
+    cc.appendChild(h('span', 'chip Active', 'Banned: ' + D.bans));
+    b.appendChild(cc);
+    var d = sec('Page views, last 7 days'), mx = Math.max.apply(null, D.an.day.map(function (x) { return x[1]; }).concat([1]));
+    D.an.day.forEach(function (x) {
+      var r = h('div', 'bar'), t = h('i'), u = h('u'); u.style.width = Math.round(x[1] / mx * 100) + '%'; t.appendChild(u);
+      r.appendChild(h('span', '', x[0].slice(5))); r.appendChild(t); r.appendChild(h('span', '', String(x[1]))); d.appendChild(r);
+    });
+    var e = sec('Visitors');
+    e.appendChild(h('h3', '', 'Top countries'));
+    if (!D.an.co.length) e.appendChild(h('p', 'mut', 'No data yet.'));
+    D.an.co.forEach(function (x) { e.appendChild(rowKV(x[0], x[1])); });
+    e.appendChild(h('h3', '', 'Platforms'));
+    D.an.pl.forEach(function (x) { e.appendChild(rowKV(x[0], x[1])); });
+    e.appendChild(h('h3', '', 'Events'));
+    Object.keys(D.an.ev).forEach(function (k) { e.appendChild(rowKV(k, D.an.ev[k])); });
+    var f = sec('Database tabs');
+    Object.keys(D.tabs).forEach(function (k) {
+      var r = h('div', 'row'); r.appendChild(h('span', '', k + ' (' + D.tabs[k].n + ')')); r.appendChild(h('span', 'chip ' + (D.tabs[k].on ? 'on' : 'off'), D.tabs[k].on ? 'ON' : 'OFF')); f.appendChild(r);
+    });
+    var l = sec('Recent activity');
+    if (!D.audit.length) l.appendChild(h('p', 'mut', 'No activity yet.'));
+    D.audit.forEach(function (x) { var r = h('div', ''); r.appendChild(h('b', '', x.a)); r.appendChild(h('p', 'mut', x.t + ' - ' + x.m)); l.appendChild(r); });
+  }
+  function rowKV(k, v) { var r = h('div', 'row'); r.appendChild(h('span', '', k)); r.appendChild(h('b', '', String(v))); return r; }
+
+  /* reviews */
+  async function loadRv(off) {
+    var r = await call('adm_reviews', { s: rvFilter, o: off });
+    if (!r) return;
+    rvItems = off ? rvItems.concat(r.items) : r.items; rvMore = r.more; drawRv();
+  }
+  function stars(n) { return '\u2605'.repeat(n) + '\u2606'.repeat(5 - n); }
+  function drawRv() {
+    var m = $('main'); m.innerHTML = '';
+    var f = h('div', 'chips');
+    ['All', 'Live', 'Pending', 'Rejected'].forEach(function (k) {
+      var b = btn(k, k === rvFilter ? '' : 'ghost', function () { rvFilter = k; loadRv(0); }); b.classList.add('sm'); f.appendChild(b);
+    });
+    m.appendChild(f);
+    if (!rvItems.length) m.appendChild(h('div', 'card', 'No reviews found.'));
+    rvItems.forEach(function (x) {
+      var c = h('div', 'rv'), t = h('div', 't');
+      t.appendChild(h('b', '', 'Reader ' + x.u)); t.appendChild(h('span', 'chip ' + x.st, x.st)); if (!x.a) t.appendChild(h('span', 'chip off', 'Row disabled'));
+      c.appendChild(t);
+      c.appendChild(h('p', 'mut', x.d + ' ' + x.t + ' | ' + x.b + ' | ' + stars(x.s) + ' | Helpful ' + x.h));
+      c.appendChild(h('p', '', x.x));
+      var a = h('div', 'acts');
+      if (x.st !== 'Live') a.appendChild(sm('Approve', '', function () { setSt(x, 'Live'); }));
+      if (x.st !== 'Rejected') a.appendChild(sm('Reject', 'ghost', function () { confirmBox('Reject review', 'This review will be excluded from public display until restored.', 'Reject', true, function () { setSt(x, 'Rejected'); }); }));
+      if (x.st !== 'Pending') a.appendChild(sm('Pending', 'ghost', function () { setSt(x, 'Pending'); }));
+      a.appendChild(sm('Edit', 'ghost', function () { editRv(x); }));
+      a.appendChild(sm('Delete', 'red', function () { confirmBox('Delete review', 'This review will be permanently deleted.', 'Delete', true, async function () { if (await call('adm_delete', { i: x.i })) { toast('Review deleted.'); loadRv(0); } }); }));
+      a.appendChild(sm('Ban user', 'red', function () { banRv(x); }));
+      c.appendChild(a); m.appendChild(c);
+    });
+    if (rvMore) m.appendChild(btn('Show more', 'ghost', function () { loadRv(rvItems.length); }));
+  }
+  function sm(t, c, f) { var b = btn(t, c, f); b.classList.add('sm'); return b; }
+  async function setSt(x, s) { if (await call('adm_status', { i: x.i, s: s })) { toast('Review set to ' + s + '.'); loadRv(0); } }
+  function editRv(x) {
+    var b = h('div', ''); b.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+    var ta = h('textarea', 'inp'); ta.value = x.x; ta.maxLength = 500;
+    var sel = x.s, row = h('div', 'seg'), sb = [];
+    function paint() { sb.forEach(function (q, i) { q.className = 'btn sm ' + (i + 1 === sel ? '' : 'ghost'); }); }
+    for (var i = 1; i <= 5; i++) (function (n) { var q = btn(String(n), 'ghost', function () { sel = n; paint(); }); q.classList.add('sm'); sb.push(q); row.appendChild(q); })(i);
+    paint(); b.appendChild(ta); b.appendChild(h('p', 'mut', 'Star rating')); b.appendChild(row);
+    modal({ title: 'Edit review', body: b, actions: [
+      { t: 'Save', f: function (close) { (async function () { if (ta.value.trim().length < 5) { toast('Please enter at least 5 characters.'); return; } if (await call('adm_edit', { i: x.i, x: ta.value, s: sel })) { close(); toast('Review updated.'); loadRv(0); } })(); return false; } },
+      { t: 'Cancel', k: 'ghost' }] });
+  }
+  function banRv(x) {
+    var b = h('div', ''); b.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+    var inp = h('input', 'inp'); inp.placeholder = 'Reason (optional)'; inp.maxLength = 120;
+    b.appendChild(h('p', '', 'This user and device will be blocked from reviews, votes, ratings and likes.')); b.appendChild(inp);
+    modal({ title: 'Ban user', body: b, actions: [
+      { t: 'Ban', k: 'red', f: function (close) { (async function () { if (await call('adm_ban', { i: x.i, r: inp.value })) { close(); toast('User banned.'); } })(); return false; } },
+      { t: 'Cancel', k: 'ghost' }] });
+  }
+
+  /* controls */
+  function toggle(parent, label, desc, key, on) {
+    var r = h('div', 'row'), l = h('div', ''), sw = h('button', 'sw' + (on ? ' on' : '')); sw.type = 'button'; sw.setAttribute('aria-label', label);
+    l.appendChild(h('span', '', label)); if (desc) l.appendChild(h('small', '', desc));
+    sw.onclick = async function () {
+      var nv = !sw.classList.contains('on'), o = {}; o[key] = nv;
+      var r2 = await call('adm_cfg', { set: o });
+      if (r2) { sw.classList.toggle('on', nv); D.cfg[key] = nv ? 'TRUE' : 'FALSE'; toast('Saved.'); }
+    };
+    r.appendChild(l); r.appendChild(sw); parent.appendChild(r);
+  }
+  function cf() {
+    var c = D.cfg, m = $('main'); m.innerHTML = '';
+    var a = sec('Review system');
+    toggle(a, 'Review functionality', 'Master switch for reviews, ratings and votes', 'ReviewEnabled', c.ReviewEnabled === 'TRUE');
+    toggle(a, 'Review submissions', 'Allow new reviews', 'SubmissionsEnabled', c.SubmissionsEnabled === 'TRUE');
+    toggle(a, 'Voting', 'Allow helpful votes', 'VotingEnabled', c.VotingEnabled === 'TRUE');
+    toggle(a, 'Star ratings', 'Allow five-star ratings', 'RatingsEnabled', c.RatingsEnabled === 'TRUE');
+    toggle(a, 'User reviews', 'Show reviews publicly', 'UserReviewsEnabled', c.UserReviewsEnabled === 'TRUE');
+    toggle(a, 'review.js', 'Turn the review script on or off in the store', 'ReviewJsEnabled', c.ReviewJsEnabled === 'TRUE');
+
+    var b = sec('Moderation'), sg = h('div', 'seg'), cur2 = c.ModerationDefault;
+    b.appendChild(h('p', 'mut', 'New reviews are published as:'));
+    ['Live', 'Pending'].forEach(function (k) {
+      var q = btn(k, k === cur2 ? '' : 'ghost', async function () {
+        if (await call('adm_cfg', { set: { ModerationDefault: k } })) { D.cfg.ModerationDefault = k; toast('Saved.'); cf(); }
+      }); sg.appendChild(q);
+    });
+    b.appendChild(sg);
+    b.appendChild(h('p', 'mut', 'Live shows reviews immediately. Pending holds them until you approve. Rejected reviews stay hidden unless you restore them.'));
+
+    var d = sec('Submission rate limit');
+    d.appendChild(h('p', 'mut', 'Seconds between review submissions (0 to 21600).'));
+    var ri = h('input', 'inp'); ri.type = 'number'; ri.min = '0'; ri.max = '21600'; ri.value = c.RateLimitSeconds; ri.inputMode = 'numeric';
+    d.appendChild(ri);
+    d.appendChild(btn('Save rate limit', '', async function () { if (await call('adm_cfg', { set: { RateLimitSeconds: ri.value } })) { D.cfg.RateLimitSeconds = ri.value; toast('Saved.'); } }));
+
+    var e = sec('Announcement popup');
+    toggle(e, 'Show announcement', 'Visitors see it once per announcement', 'AnnouncementEnabled', c.AnnouncementEnabled === 'TRUE');
+    var ta = h('textarea', 'inp'); ta.value = c.AnnouncementText || ''; ta.maxLength = 300; ta.placeholder = 'Announcement message';
+    e.appendChild(ta);
+    e.appendChild(btn('Save announcement', '', async function () { if (await call('adm_cfg', { set: { AnnouncementText: ta.value } })) { D.cfg.AnnouncementText = ta.value; toast('Saved.'); } }));
+
+    var f = sec('Database tab switches (ActiveSheet)');
+    f.appendChild(h('p', 'mut', 'Turning a tab off disables it completely.'));
+    Object.keys(D.tabs).forEach(function (k) { if (k !== 'SystemConfig') toggle(f, k, '', 'ActiveSheet.' + k, D.tabs[k].on); });
+
+    var g = sec('Tools');
+    g.appendChild(btn('Clear System Cache', '', function () {
+      confirmBox('Clear system cache', 'All cached data will be purged and the store will refresh at its next hourly ping.', 'Clear cache', false, async function () {
+        if (await call('adm_clear')) { toast('System cache cleared.'); try { new BroadcastChannel('dv-ebook').postMessage('purge'); } catch (x) {} }
+      });
+    }));
+  }
+
+  /* bans */
+  async function bn() {
+    var r = await call('adm_bans'); if (!r) return;
+    var m = $('main'); m.innerHTML = '';
+    if (!r.items.length) m.appendChild(h('div', 'card', 'No banned users.'));
+    r.items.forEach(function (x) {
+      var c = h('div', 'rv'), t = h('div', 't');
+      t.appendChild(h('b', '', 'Reader ' + x.u)); t.appendChild(h('span', 'chip ' + x.st, x.st));
+      c.appendChild(t); c.appendChild(h('p', 'mut', x.d + ' | ' + x.r));
+      if (x.st === 'Active') c.appendChild(sm('Lift ban', '', function () { confirmBox('Lift ban', 'This user will be able to use reviews, votes and ratings again.', 'Lift ban', false, async function () { if (await call('adm_unban', { i: x.i })) { toast('Ban lifted.'); bn(); } }); }));
+      m.appendChild(c);
+    });
+  }
+
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+
+  /* boot */
+  api = ls(URLK);
+  var ses = ls(SESK);
+  if (!api) show('sGate');
+  else if (ses && ses.x > Date.now()) { tok = ses.t; enter(); }
+  else show('sGate');
+})();
+</script>
+</body>
+</html>
