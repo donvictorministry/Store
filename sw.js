@@ -1,5 +1,5 @@
-var DV_CACHE = 'dv-prayer-landing-v5';
-var DV_FILES = ['./','index.html','styles.css','app.js','QRcode.js','manifest.json','cover.png','cover-dont-give-up.png','cover-prophesy-your-future.png','cover-frame-your-world.png','icon-192.png','icon-512.png'];
+var DV_CACHE = 'dv-prayer-landing-v6';
+var DV_FILES = ['./','index.html','styles.css','app.js','QRcode.js','stat.js','review.js','manifest.json','cover.png','cover-dont-give-up.png','cover-prophesy-your-future.png','cover-frame-your-world.png','icon-192.png','icon-512.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(DV_CACHE).then(function (c) {
@@ -17,6 +17,7 @@ self.addEventListener('activate', function (e) {
 
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
+  if (new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(caches.match(e.request).then(function (hit) {
     return hit || fetch(e.request).then(function (res) {
       if (res && res.status === 200 && new URL(e.request.url).origin === location.origin) {
