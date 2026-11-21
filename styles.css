@@ -437,3 +437,29 @@ p, h1, h2, strong {
     padding-right: 10px;
   }
 }
+
+/* NAME PILL AND SCREEN-READER HEADING */
+
+.dv-name-pill {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--blue);
+  color: var(--white);
+  border: 3px solid var(--gold);
+  border-radius: 999px;
+  font-size: clamp(15px, 4.7vw, 21px);
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dv-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
