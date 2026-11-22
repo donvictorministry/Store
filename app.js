@@ -7,7 +7,7 @@
   var DV_KEY = 'dvPrayer';
 
   var CONFIG = {
-    waUrl: 'https://wa.me/234XXXXXXXXXX',
+    waUrl: 'https://wa.me/2347035794649',
     dark: '#0A3F8F',
     light: '#FFFFFF'
   };
