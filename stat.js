@@ -1,7 +1,3 @@
-/* eBook Store: stat.js (self-contained PageViews | PageLikes | Reviews tiles).
-   Backend traffic rules: NO request on open, close, reload or navigation. A page view is recorded on the visitor's
-   first explicit interaction (tap or scroll). A like is recorded on tap. The only automatic traffic is one hourly
-   ping (max 24 a day) while the app stays open. */
 (function () {
   'use strict';
 
