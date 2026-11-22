@@ -1,6 +1,3 @@
-/* eBook Store: review.js (self-contained review, star rating and voting UI).
-   Backend traffic rules: NO request on open, close, reload or navigation. The only automatic traffic is one
-   hourly ping (max 24 a day) while the app stays open. Everything else happens on an explicit tap. */
 (function () {
   'use strict';
 
