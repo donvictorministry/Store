@@ -12,6 +12,7 @@
 
   var CONFIG = {
     waUrl: 'https://wa.me/2347035794649',
+waInvoiceUrl: 'https://wa.me/234YYYYYYYYYY',
     dark: '#0A3F8F',
     light: '#FFFFFF'
   };
@@ -40,8 +41,11 @@
     else container.textContent = 'Unable to generate QR code. Please verify the payment details.';
   }
 
-  var wa = document.querySelectorAll('[data-dv-wa]');
+    var wa = document.querySelectorAll('[data-dv-wa]');
   for (var w = 0; w < wa.length; w++) wa[w].href = CONFIG.waUrl;
+
+  var waInv = document.querySelectorAll('[data-dv-wa-invoice]');
+  for (var wi = 0; wi < waInv.length; wi++) waInv[wi].href = CONFIG.waInvoiceUrl;
 
   var stack = [];
 
