@@ -1,10 +1,14 @@
 (function () {
   'use strict';
-
-  /* Payment and contact details exist only as this encoded string.
-     They are decoded in memory to draw the QR code and appear nowhere on the page. */
-  var DV_SECRET = 'NDcJPyQ3MVIgMwQzKDU2eCYXPhlbWTUTCBsAExhzJBEHGSUcFVkrBwkUNQBbWVVDVkVkR1dOXUtuNzMRDgwLBkQ4MR8EQ0UxDAQ5AUEzChoKBT8ca3MmPSoiETE1WSE3MDcZPjJzMRcITHBZU0pRKjwuCCo5IT0qPHwVHwAQCUhEBSUCERYXBiQbORwIChEAHVg/AAY=';
-  var DV_KEY = 'dvPrayer';
+  
+  var DETAILS = {
+    bankName: 'PalmPay',
+    accountName: 'Don Victor',
+    accountNumber: '8961346380',
+    telephone: '+2347035794649',
+    email: 'donvictorministry@gmail.com',
+    facebook: 'facebook.com/Rev.DonVictor'
+  };
 
   var CONFIG = {
     waUrl: 'https://wa.me/2347035794649',
@@ -12,19 +16,21 @@
     light: '#FFFFFF'
   };
 
-  function dvDecode(b64, key) {
-    var s = atob(b64), out = '';
-    for (var i = 0; i < s.length; i++) {
-      out += String.fromCharCode(s.charCodeAt(i) ^ key.charCodeAt(i % key.length));
-    }
-    return decodeURIComponent(escape(out));
-  }
+  var PAYLOAD =
+    'PAYMENT DETAILS\n' +
+    'Bank: ' + DETAILS.bankName + '\n' +
+    'Account Name: ' + DETAILS.accountName + '\n' +
+    'Account Number: ' + DETAILS.accountNumber + '\n\n' +
+    'CONTACT DETAILS\n' +
+    'Tel: ' + DETAILS.telephone + '\n' +
+    'Email: ' + DETAILS.email + '\n' +
+    'Facebook: ' + DETAILS.facebook;
 
   var container = document.getElementById('qr-container');
   var svg = null;
 
   try {
-    svg = window.dvQR.render(dvDecode(DV_SECRET, DV_KEY), CONFIG.dark, CONFIG.light);
+    svg = window.dvQR.render(PAYLOAD, CONFIG.dark, CONFIG.light);
   } catch (e) {
     svg = null;
   }
