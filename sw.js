@@ -1,4 +1,4 @@
-var DV_CACHE = 'dv-prayer-landing-v6';
+var DV_CACHE = 'dv-prayer-landing-v7';
 var DV_FILES = ['./','index.html','styles.css','app.js','QRcode.js','stat.js','review.js','manifest.json','cover.png','cover-dont-give-up.png','cover-prophesy-your-future.png','cover-frame-your-world.png','icon-192.png','icon-512.png'];
 
 self.addEventListener('install', function (e) {
