@@ -1,7 +1,7 @@
 {
   "name": "eBook Store",
   "short_name": "eBook Store",
-  "description": "Christian eBooks in Nigeria by Rev. Dr. Chris Johnson.",
+  "description": "Christian eBooks in Nigeria by Rev. Dr. Don Victor.",
   "lang": "en-NG",
   "start_url": "./index.html",
   "scope": "./",
@@ -11,13 +11,13 @@
   "theme_color": "#0A3F8F",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://app.donvictorministry.org.ng/Store/app-icon1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://app.donvictorministry.org.ng/Store/app-icon1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
