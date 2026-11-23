@@ -168,7 +168,7 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
     try {
       var f = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(x), redirect: 'follow' });
       return await f.json();
-    } catch (e) { return { ok: false, code: 'NET', msg: 'Unable to reach the backend. Check the web app URL and your connection.' }; }
+    } catch (e) { return { ok: false, code: 'NET', msg: 'Unable to reach the backend. Check the web app URL, your connection, and that the deployment access is set to Anyone.' }; }
   }
   async function call(a, x, quiet) {
     spin(true);
