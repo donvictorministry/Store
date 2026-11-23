@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var API = 'PASTE_WEB_APP_URL_HERE';
+  var API = 'https://script.google.com/macros/s/AKfycbwfUxRk9gF7PS4aKgvXMDYvvQvcLmOBtzV9aB8dqhGXbYPz5xQudHa3YUAONeDaF8BLUg/exec';
   var POLL_MS = 3600000, MAX_PINGS = 24;
   var host = document.getElementById('dvStat');
   if (!host) return;
@@ -132,11 +132,42 @@
     } catch (e) { return null; }
   }
 
+  /* buyer-intent events: queued on the phone, sent with the next explicit request or the hourly ping */
+  var EVMAP = { dvAbout: 'prayer', dvDontGiveUp: 'dontgiveup', dvProphesy: 'prophesy', dvFrame: 'frame' };
+  var lastBook = '';
+  function queue(ev, book) {
+    var q = get('dv_st_q') || [];
+    q.push([ev, book || '']);
+    set('dv_st_q', q.slice(-30));
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-dv-open],[data-dv-wa],[data-dv-wa-invoice]') : null;
+    if (!t) return;
+    var id = t.getAttribute('data-dv-open');
+    if (id) { if (EVMAP[id]) { lastBook = EVMAP[id]; queue('BookClick', lastBook); } }
+    else queue('WhatsAppClick', lastBook);
+  }, true);
+  try {
+    var qr = document.querySelector('.flyer-qr'), seenQr = false;
+    if (qr && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (en) { if (en.isIntersecting && !seenQr) { seenQr = true; queue('QRView', lastBook); } });
+      }, { threshold: 0.6 }).observe(qr);
+    }
+  } catch (e) {}
+  async function send(body) {
+    var q = get('dv_st_q') || [], n = Math.min(q.length, 10);
+    if (n) body.ev = q.slice(0, n);
+    var r = await post(body);
+    if (n && r && r.ok) set('dv_st_q', (get('dv_st_q') || []).slice(n));
+    return r;
+  }
+
   /* explicit actions */
   async function like() {
     if (get('dv_st_like') === wat()) { toast('You have already liked this today.'); return; }
     var ids = await ident(), m = await meta();
-    var r = await post({ a: 'like', u: ids.u, d: ids.d, m: m });
+    var r = await send({ a: 'like', u: ids.u, d: ids.d, m: m });
     if (r && r.ok) { set('dv_st_like', wat()); apply(r); toast('Thank you for the love.'); }
     else if (r && r.code === 'DAILY') { set('dv_st_like', wat()); paint(); toast(r.msg); }
     else toast((r && r.msg) || 'Unable to like right now.');
@@ -151,7 +182,7 @@
     try { if (sessionStorage.getItem('dv_st_v')) return; sessionStorage.setItem('dv_st_v', '1'); } catch (e) {}
     (async function () {
       var ids = await ident(), m = await meta();
-      apply(await post({ a: 'view', u: ids.u, d: ids.d, m: m }));
+      apply(await send({ a: 'view', u: ids.u, d: ids.d, m: m }));
     })();
   }
   window.addEventListener('pointerdown', first, true);
@@ -164,8 +195,9 @@
     if (p.d !== wat()) p = { d: wat(), n: 0 };
     if (p.n >= MAX_PINGS) return;
     p.n++; set('dv_st_pc', p);
-    var ids = await ident();
-    apply(await post({ a: 'poll', m: 's', d: ids.d }));
+    var ids = await ident(), mt = null;
+    try { mt = JSON.parse(sessionStorage.getItem('dv_meta')); } catch (e) {}
+    apply(await send({ a: 'poll', m: 's', u: ids.u, d: ids.d, mt: mt }));
   }
   setInterval(ping, POLL_MS);
   try {
