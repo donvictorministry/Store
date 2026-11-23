@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var API = 'PASTE_WEB_APP_URL_HERE';
+  var API = 'https://script.google.com/macros/s/AKfycbwfUxRk9gF7PS4aKgvXMDYvvQvcLmOBtzV9aB8dqhGXbYPz5xQudHa3YUAONeDaF8BLUg/exec';
   var POLL_MS = 3600000, MAX_PINGS = 24;
   var BOOKS = [
     { id: 'prayer', t: 'The Prayer App' },
@@ -41,6 +41,9 @@
     '.dvr-meta .dvr-st svg{width:18px;height:18px}' +
     '.dvr-chip{font-size:17px;font-weight:700;color:#0A3F8F;background:#fff;border:1px solid rgba(10,63,143,.2);border-radius:999px;padding:2px 12px}' +
     '.dvr-tx{font-size:19px;line-height:1.55;color:#121212;overflow-wrap:anywhere}' +
+    '.dvr-reply{background:#fff;border-left:4px solid #E9B93C;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}' +
+    '.dvr-reply b{font-size:17px;color:#0A3F8F}' +
+    '.dvr-reply p{font-size:19px;line-height:1.5;color:#121212;overflow-wrap:anywhere}' +
     '.dvr-help{align-self:flex-start;min-height:44px;border:2px solid #0A3F8F;background:#fff;color:#0A3F8F;border-radius:999px;padding:6px 18px;font-size:17px;font-weight:900;font-family:inherit;cursor:pointer;white-space:nowrap}' +
     '.dvr-help.done{background:#0A3F8F;color:#fff}' +
     '.dvr-btn{width:100%;min-height:56px;border:3px solid #E9B93C;border-radius:999px;background:#0A3F8F;color:#fff;font-family:inherit;font-size:19px;font-weight:900;line-height:1.2;padding:10px 16px;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
@@ -259,6 +262,12 @@
     m.appendChild(h('span', 'dvr-chip', x.t));
     d.appendChild(m);
     d.appendChild(h('p', 'dvr-tx', x.x));
+    if (x.r) {
+      var rp = h('div', 'dvr-reply');
+      rp.appendChild(h('b', '', "Author's reply"));
+      rp.appendChild(h('p', '', x.r));
+      d.appendChild(rp);
+    }
     if (c.vo !== false) {
       var b = h('button', 'dvr-help' + (VOTED[x.i] ? ' done' : ''), (VOTED[x.i] ? 'Helpful ' : 'Helpful? ') + '(' + x.h + ')');
       b.type = 'button';
@@ -295,7 +304,7 @@
   }
 
   function openForm(pre) {
-    var c = S.cfg || {}, max = c.max || 300, book = '', rating = pre || 0;
+    var c = S.cfg || {}, max = c.max || 400, book = '', rating = pre || 0;
     var body = h('div', 'dvr-mb');
     body.appendChild(h('p', 'dvr-lbl', 'Choose a book'));
     var opt = h('div', 'dvr-opt'), picks = [];
