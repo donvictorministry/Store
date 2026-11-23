@@ -273,7 +273,7 @@
       d.appendChild(rp);
     }
     if (c.vo !== false) {
-      var b = h('button', 'dvr-help' + (VOTED[x.i] ? ' done' : ''), (VOTED[x.i] ? 'Helpful ' : 'Helpful? ') + '(' + x.h + ')');
+      var b = h('button', 'dvr-help' + (VOTED[x.i] ? ' done' : ''), (VOTED[x.i] ? 'Helpful ' : 'Was this helpful? ') + '(' + x.h + ')');
       b.type = 'button';
       b.onclick = function () { vote(x); };
       d.appendChild(b);
@@ -407,5 +407,3 @@
   render();
   announce();
 })();
-
-
