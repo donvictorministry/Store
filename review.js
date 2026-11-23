@@ -96,7 +96,7 @@
     else if (o.body) mb.appendChild(o.body);
     bx.appendChild(mb);
     function close() { if (ov.parentNode) ov.parentNode.removeChild(ov); }
-    (o.actions || [{ t: 'OK' }]).forEach(function (a) {
+    (o.actions || [{ t: 'Got it' }]).forEach(function (a) {
       var b = h('button', 'dvr-btn ' + (a.k || ''), a.t);
       b.type = 'button';
       b.onclick = function () { if (a.f && a.f(close) === false) return; close(); };
