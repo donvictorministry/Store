@@ -272,6 +272,17 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
     ['Live', 'Pending', 'Rejected'].forEach(function (k) { cc.appendChild(h('span', 'chip ' + k, k + ': ' + D.counts[k])); });
     cc.appendChild(h('span', 'chip Active', 'Banned: ' + D.bans));
     b.appendChild(cc);
+    var it = sec('Book interest (buyer intent)');
+    it.appendChild(h('p', 'mut', 'Book taps, QR views and WhatsApp taps from the latest 5000 events.'));
+    Object.keys(D.intent).forEach(function (k) {
+      var x = D.intent[k], r = h('div', 'rv'), ch2 = h('div', 'chips');
+      r.appendChild(h('b', '', k === 'none' ? 'General (no book opened)' : x.t));
+      if (k !== 'none') ch2.appendChild(h('span', 'chip', 'Clicks: ' + x.c));
+      ch2.appendChild(h('span', 'chip', 'QR views: ' + x.q));
+      ch2.appendChild(h('span', 'chip', 'WhatsApp: ' + x.w));
+      if (k !== 'none') ch2.appendChild(h('span', 'chip', x.n ? 'Rating: ' + Number(x.a).toFixed(1) + ' (' + x.n + ')' : 'No ratings'));
+      r.appendChild(ch2); it.appendChild(r);
+    });
     var d = sec('Page views, last 7 days'), mx = Math.max.apply(null, D.an.day.map(function (x) { return x[1]; }).concat([1]));
     D.an.day.forEach(function (x) {
       var r = h('div', 'bar'), t = h('i'), u = h('u'); u.style.width = Math.round(x[1] / mx * 100) + '%'; t.appendChild(u);
@@ -316,10 +327,12 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
       c.appendChild(t);
       c.appendChild(h('p', 'mut', x.d + ' ' + x.t + ' | ' + x.b + ' | ' + stars(x.s) + ' | Helpful ' + x.h));
       c.appendChild(h('p', '', x.x));
+      if (x.r) c.appendChild(h('p', 'mut', 'Author reply: ' + x.r));
       var a = h('div', 'acts');
       if (x.st !== 'Live') a.appendChild(sm('Approve', '', function () { setSt(x, 'Live'); }));
       if (x.st !== 'Rejected') a.appendChild(sm('Reject', 'ghost', function () { confirmBox('Reject review', 'This review will be excluded from public display until restored.', 'Reject', true, function () { setSt(x, 'Rejected'); }); }));
       if (x.st !== 'Pending') a.appendChild(sm('Pending', 'ghost', function () { setSt(x, 'Pending'); }));
+      a.appendChild(sm(x.r ? 'Edit reply' : 'Reply', 'ghost', function () { replyRv(x); }));
       a.appendChild(sm('Edit', 'ghost', function () { editRv(x); }));
       a.appendChild(sm('Delete', 'red', function () { confirmBox('Delete review', 'This review will be permanently deleted.', 'Delete', true, async function () { if (await call('adm_delete', { i: x.i })) { toast('Review deleted.'); loadRv(0); } }); }));
       a.appendChild(sm('Ban user', 'red', function () { banRv(x); }));
@@ -331,13 +344,21 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
   async function setSt(x, s) { if (await call('adm_status', { i: x.i, s: s })) { toast('Review set to ' + s + '.'); loadRv(0); } }
   function editRv(x) {
     var b = h('div', ''); b.style.cssText = 'display:flex;flex-direction:column;gap:10px';
-    var ta = h('textarea', 'inp'); ta.value = x.x; ta.maxLength = 500;
+    var ta = h('textarea', 'inp'); ta.value = x.x; ta.maxLength = 400;
     var sel = x.s, row = h('div', 'seg'), sb = [];
     function paint() { sb.forEach(function (q, i) { q.className = 'btn sm ' + (i + 1 === sel ? '' : 'ghost'); }); }
     for (var i = 1; i <= 5; i++) (function (n) { var q = btn(String(n), 'ghost', function () { sel = n; paint(); }); q.classList.add('sm'); sb.push(q); row.appendChild(q); })(i);
     paint(); b.appendChild(ta); b.appendChild(h('p', 'mut', 'Star rating')); b.appendChild(row);
     modal({ title: 'Edit review', body: b, actions: [
       { t: 'Save', f: function (close) { (async function () { if (ta.value.trim().length < 5) { toast('Please enter at least 5 characters.'); return; } if (await call('adm_edit', { i: x.i, x: ta.value, s: sel })) { close(); toast('Review updated.'); loadRv(0); } })(); return false; } },
+      { t: 'Cancel', k: 'ghost' }] });
+  }
+  function replyRv(x) {
+    var b = h('div', ''); b.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+    var ta = h('textarea', 'inp'); ta.value = x.r || ''; ta.maxLength = 200; ta.placeholder = 'Write a public reply (leave empty to remove)';
+    b.appendChild(h('p', 'mut', 'Your reply appears publicly under this review once it is Live (200 characters).')); b.appendChild(ta);
+    modal({ title: 'Author reply', body: b, actions: [
+      { t: 'Save reply', f: function (close) { (async function () { if (await call('adm_reply', { i: x.i, x: ta.value })) { close(); toast(ta.value.trim() ? 'Reply saved.' : 'Reply removed.'); loadRv(0); } })(); return false; } },
       { t: 'Cancel', k: 'ghost' }] });
   }
   function banRv(x) {
