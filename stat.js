@@ -48,7 +48,7 @@
   function build() {
     var w = document.createElement('div');
     w.className = 'dvs';
-    'v', 'Views'], ['l', 'Likes'], ['r', 'Reviews'.forEach(function (d) {
+    [['v', 'Views'], ['l', 'Likes'], ['r', 'Reviews']].forEach(function (d) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'dvs-t';
       b.innerHTML = ICON[d[0]];
