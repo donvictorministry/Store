@@ -1,7 +1,9 @@
+/* eBook Store: stat.js  */
+
 (function () {
   'use strict';
 
-  var API = 'https://script.google.com/macros/s/AKfycbwfUxRk9gF7PS4aKgvXMDYvvQvcLmOBtzV9aB8dqhGXbYPz5xQudHa3YUAONeDaF8BLUg/exec';
+  var API = 'https://script.google.com/macros/s/AKfycbxsfpjqWuvuoiYvJXGYqnr4zx1nTX-NMHH65GKoQ7073Kb7iLNExtEt_YAd9skssQgWpQ/exec';
   var POLL_MS = 3600000, MAX_PINGS = 24;
   var host = document.getElementById('dvStat');
   if (!host) return;
@@ -204,6 +206,9 @@
     var bc = new BroadcastChannel('dv-ebook');
     bc.onmessage = function (e) { if (e.data === 'purge') ping(); };
   } catch (e) {}
+
+  /* review.js hands over fresh totals after a review or a refresh (no request needed) */
+  window.addEventListener('dv-stat', function (e) { apply({ ok: true, stat: e.detail }); });
 
   build();
   paint();
