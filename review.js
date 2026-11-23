@@ -1,7 +1,8 @@
+/* eBook Store: review.js  */
 (function () {
   'use strict';
 
-  var API = 'https://script.google.com/macros/s/AKfycbwfUxRk9gF7PS4aKgvXMDYvvQvcLmOBtzV9aB8dqhGXbYPz5xQudHa3YUAONeDaF8BLUg/exec';
+  var API = 'https://script.google.com/macros/s/AKfycbxsfpjqWuvuoiYvJXGYqnr4zx1nTX-NMHH65GKoQ7073Kb7iLNExtEt_YAd9skssQgWpQ/exec';
   var POLL_MS = 3600000, MAX_PINGS = 24;
   var BOOKS = [
     { id: 'prayer', t: 'The Prayer App' },
@@ -182,6 +183,9 @@
       return { ok: false, msg: 'Network problem. Please check your connection and try again.' };
     }
   }
+  function tellStat(r) {
+    try { if (r && r.stat) window.dispatchEvent(new CustomEvent('dv-stat', { detail: r.stat })); } catch (e) {}
+  }
   function apply(r) {
     if (!r || !r.ok || r.skip) return false;
     if (r.cfg) S.cfg = r.cfg;
@@ -349,7 +353,7 @@
       spin(false);
       if (r && r.ok) {
         close();
-        apply(r); render();
+        apply(r); render(); tellStat(r);
         var b2 = h('div', 'dvr-mb');
         b2.appendChild(h('p', '', isRev ? r.msg : 'Thank you for rating.'));
         if (isRev && r.status === 'Pending') b2.appendChild(h('p', '', 'It will appear once it has been approved.'));
@@ -370,6 +374,24 @@
     if (apply(r)) { render(); announce(); }
   }
   setInterval(ping, POLL_MS);
+
+  /* fresh reviews whenever the visitor taps or scrolls (explicit actions, never on open), at most once every 10 seconds */
+  var lastFresh = 0, busy = false;
+  async function refresh() {
+    var before = JSON.stringify([S.cfg, S.sum, S.items]);
+    var n = Math.max(8, Math.min(40, (S.items && S.items.length) || 8));
+    var r = await post({ a: 'reviews', o: 0, n: n }, true);
+    if (!apply(r)) return;
+    tellStat(r);
+    if (JSON.stringify([S.cfg, S.sum, S.items]) !== before) { render(); announce(); }
+  }
+  function interact() {
+    if (busy || document.hidden || !navigator.onLine || Date.now() - lastFresh < 90000) return;
+    busy = true; lastFresh = Date.now();
+    refresh().then(function () { busy = false; }, function () { busy = false; });
+  }
+  window.addEventListener('pointerdown', interact, true);
+  window.addEventListener('scroll', interact, { capture: true, passive: true });
   try {
     var bc = new BroadcastChannel('dv-ebook');
     bc.onmessage = function (e) { if (e.data === 'purge') ping(); };
@@ -385,3 +407,5 @@
   render();
   announce();
 })();
+
+
