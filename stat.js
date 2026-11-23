@@ -1,4 +1,4 @@
-/* eBook Store: stat.js  */
+/* eBook Store: stat.js */
 
 (function () {
   'use strict';
@@ -48,7 +48,7 @@
   function build() {
     var w = document.createElement('div');
     w.className = 'dvs';
-    [['v', 'Views'], ['l', 'Likes'], ['r', 'Reviews']].forEach(function (d) {
+    'v', 'Views'], ['l', 'Likes'], ['r', 'Reviews'.forEach(function (d) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'dvs-t';
       b.innerHTML = ICON[d[0]];
@@ -69,8 +69,9 @@
   }
   function paint() {
     ['v', 'l', 'r'].forEach(function (k) { tiles[k].n.textContent = S ? fmt(S[k]) : '\u2014'; });
-    tiles.l.b.className = 'dvs-t' + (get('dv_st_like') === wat() ? ' liked' : '');
+    tiles.l.b.className = 'dvs-t' + (get('dv_st_like') ? ' liked' : '');
   }
+  
   function apply(r) {
     if (!r || !r.ok || !r.stat) return false;
     S = { v: r.stat.v, l: r.stat.l, r: r.stat.r };
