@@ -12,7 +12,7 @@
 
   var CONFIG = {
     waUrl: 'https://wa.me/2347035794649',
-waInvoiceUrl: 'https://wa.me/234YYYYYYYYYY',
+waInvoiceUrl: 'https://chat.whatsapp.com/IJ1uKxonvq52aQSJyEl9wW?s=cl&p=a&iam=2',
     dark: '#0A3F8F',
     light: '#FFFFFF'
   };
