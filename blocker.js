@@ -1,7 +1,3 @@
-/* blocker.js: self-contained desktop computer blocker.
-   Load it FIRST inside <head>. To remove it completely, delete the <script src="blocker.js"> line.
-   Blocked: Windows, macOS, Linux, ChromeOS, smart TVs, game consoles and Android "Desktop site" mode.
-   Allowed: Android and Apple touch devices (phones and tablets). */
 (function () {
   'use strict';
 
@@ -37,8 +33,8 @@
     b.id = 'dvb';
     b.setAttribute('role', 'alert');
     b.innerHTML = '<svg viewBox="0 0 24 24" width="72" height="72" fill="currentColor" aria-hidden="true"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zM17 19H7V5h10v14z"/></svg>' +
-      '<h2>Phones and tablets only</h2>' +
-      '<p>This app works on Android and iPhone devices. Desktop computers are not supported. If you are on a phone or tablet and see this, turn off "Desktop site" in your browser menu.</p>';
+      '<h2>Phones And Tablets Only</h2>' +
+      '<p>Explore our collection of ebooks on your Android phone, tablet, iPhone, or iPad. This ebook store is exclusively available on mobile devices. Desktop computers are not supported. If you are using a phone or tablet and see this message, please turn off "Desktop mode" in your browser menu to access the store, explore our available ebooks, and place your orders.</p>';
     document.body.appendChild(b);
   }
   if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
